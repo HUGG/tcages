@@ -7,8 +7,6 @@ import platform
 import threading
 from ctypes import CDLL, POINTER, byref, c_double, c_float, c_int, c_void_p
 from dataclasses import dataclass
-from importlib.metadata import version
-from importlib.resources import files
 
 import numpy as np
 
