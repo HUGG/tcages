@@ -4,7 +4,6 @@ CFLAGS = -O2 -I.
 LIBS = -lm
 DEPS = ketch.h
 OBJ = ketch.c ketch_aft.c
-#DESTDIR = ../../bin
 DESTDIR = $(HOME)/.local/bin/
 
 # Compiles source files

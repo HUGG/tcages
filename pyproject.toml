@@ -1,0 +1,49 @@
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build:core.build"
+
+[project]
+name = "tccore"
+version = "0.5.0"
+authors = [
+    {name = "Dave Whipp", email = "david.whipp@helsinki.fi"},
+    {name = "Saska Dönges", email = "saska.donges@helsinki.fi"},
+]
+maintainers = [
+    {name = "Dave Whipp", email = "david.whipp@helsinki.fi"},
+]
+description = "Thermochronometer age prediction libraries (RDAAM, ketch) for Tc1D and tcplotter"
+keywords = ["thermochronology", "geology", "geophysics"]
+readme = "README.md"
+requires-python = ">=3.10.0"
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = []
+
+[tool.scikit-build]
+wheel.packages = ["src/tccore"]
+wheel.py-api = "py3"
+wheel.expand-macos-universal-tags = true
+cmake.version = ">=3.18"
+cmake.build-type = "Release"
+
+[project.urls]
+repository = "https://github.com/HUGG/tccore"

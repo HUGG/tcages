@@ -3,7 +3,6 @@ CXXFLAGS = -O2 -I.
 #CXXFLAGS = -g -Wall -I.
 DEPS = RDAAM.h
 OBJ = RDAAM.o RDAAM_He.cpp
-#DESTDIR = ../../bin
 DESTDIR = $(HOME)/.local/bin
 
 # Compiles source files
