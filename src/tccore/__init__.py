@@ -13,12 +13,12 @@ from importlib.resources import files
 import numpy as np
 
 # Versioning
-try:
-    from importlib.metadata import version
-    from importlib.resources import files
+from importlib.metadata import PackageNotFoundError, version
+from importlib.resources import files
 
+try:
     __version__ = version("tccore")
-except ImportError:
+except PackageNotFoundError:
     __version__ = "dev"
 
 __all__ = ["he_ages", "aft_age", "HeResult", "AftResult", "TccoreError"]
@@ -28,7 +28,7 @@ class TccoreError(RuntimeError):
     """Raised when an age calculation fails."""
 
 
-# --- Library loading (once, at import) --------------------------------------
+# Load library
 def _load(base: str) -> CDLL:
     name = f"{base}.dll" if platform.system() == "Windows" else f"lib{base}.so"
     path = files("tccore").joinpath(name)
@@ -38,6 +38,7 @@ def _load(base: str) -> CDLL:
         raise ImportError(f"Could not load {name} from {path}: {e}") from e
 
 
+# RDAAM configuration
 _rdaam = _load("RDAAM")
 _rdaam.make_path.argtypes = []
 _rdaam.make_path.restype = c_void_p
@@ -56,6 +57,7 @@ _rdaam.run_RDAAM_He.argtypes = [
 ]
 _rdaam.run_RDAAM_He.restype = None
 
+# Ketcham AFT configuration
 _ketch = _load("ketch")
 _ketch.ketch_main.argtypes = [
     POINTER(c_int), POINTER(c_float), POINTER(c_float),  # ntime*, time[], temp[]
@@ -65,15 +67,15 @@ _ketch.ketch_main.argtypes = [
 ]
 _ketch.ketch_main.restype = None
 
-# Both C codes use global state: serialise calls within a process
+# Both C codes use global state: serialize calls within a process
 _rdaam_lock = threading.Lock()
 _ketch_lock = threading.Lock()
 
 _NBINS = 200
-_LENGTHS = (np.arange(_NBINS) + 0.5) * 20.0 / _NBINS   # bin centres, um
+_LENGTHS = (np.arange(_NBINS) + 0.5) * 20.0 / _NBINS   # bin centers, um
 
 
-# --- Results ------------------------------------------------------------------
+# Create structures to store results
 @dataclass(frozen=True)
 class HeResult:
     ahe: float        # uncorrected apatite (U-Th)/He age, Ma
@@ -91,7 +93,7 @@ class AftResult:
     pdf: np.ndarray       # track-length probability density (200)
 
 
-# --- Input checks ---------------------------------------------------------------
+# Check input arrays are safe to proceed
 def _check_path(times, temps) -> tuple[np.ndarray, np.ndarray]:
     t = np.asarray(times, dtype=np.float64).ravel()
     T = np.asarray(temps, dtype=np.float64).ravel()
@@ -106,7 +108,7 @@ def _check_path(times, temps) -> tuple[np.ndarray, np.ndarray]:
     return t, T
 
 
-# --- Public API ------------------------------------------------------------------
+# Functions for use within programs
 def he_ages(times, temps, ap_rad, ap_u, ap_th, zr_rad, zr_u, zr_th) -> HeResult:
     """Predict apatite and zircon (U-Th)/He ages with RDAAM and ZRDAAM.
 
@@ -140,6 +142,7 @@ def aft_age(times, temps, alo: float = 16.3) -> AftResult:
     alo : initial track length, um.
     """
     t, T = _check_path(times, temps)
+    # Convert arrays to 32-bit versions
     t32 = np.ascontiguousarray(t, dtype=np.float32)   # ketch takes float[]
     T32 = np.ascontiguousarray(T, dtype=np.float32)
     age, oldest, fmean = c_double(), c_double(), c_double()
