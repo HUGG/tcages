@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "tccore"
-version = "0.3.0.dev1"
+version = "0.3.0.dev2"
 authors = [
     {name = "Dave Whipp", email = "david.whipp@helsinki.fi"},
     {name = "Saska Dönges", email = "saska.donges@helsinki.fi"},
