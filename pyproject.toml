@@ -48,3 +48,7 @@ cmake.build-type = "Release"
 
 [project.urls]
 repository = "https://github.com/HUGG/tccore"
+
+[tool.cibuildwheel]
+test-requires = ["pytest"]
+test-command = "pytest {project}/tests -v"
