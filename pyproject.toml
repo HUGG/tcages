@@ -36,7 +36,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-dependencies = []
+dependencies = ["numpy"]
 
 [tool.scikit-build]
 wheel.packages = ["src/tccore"]
