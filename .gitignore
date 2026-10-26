@@ -1,0 +1,8 @@
+build/
+dist/
+wheelhouse/
+*.so
+*.dll
+*.dylib
+__pycache__/
+*.egg-info/
