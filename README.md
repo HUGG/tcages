@@ -1,130 +1,158 @@
-# T<sub>c</sub> core
+# T<sub>c</sub>core
 
-This repository contains the core age prediction codes needed for use in [T<sub>c</sub>plotter](https://github.com/HUGG/tcplotter) and [T<sub>c</sub>1D](https://github.com/HUGG/TC1D).
-You can find instructions for how to install these programs and/or compile them for your operating system below.
+[![PyPI](https://img.shields.io/pypi/v/tccore.svg)](https://pypi.org/project/tccore/)
+[![Build](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml)
 
-**Note**: If you simply want to explore how T<sub>c</sub>plotter or T<sub>c</sub>1D work, you can visit the [T<sub>c</sub>plotter](https://github.com/HUGG/tcplotter) or [T<sub>c</sub>1D](https://github.com/HUGG/TC1D) GitHub repositories and click on the [![Binder](https://mybinder.org/badge_logo.svg)]() button on the README page, which will open an interactive notebook where you can play with the code without a need to install anything!
+T<sub>c</sub>core is a Python package for predicting low-temperature thermochronometer ages from a time-temperature (tT) history.
+It provides compiled versions of two widely used age prediction codes with a simple Python interface:
+
+- **RDAAM / ZRDAAM** for apatite and zircon (U-Th)/He ages, including the effects of radiation damage on He diffusion ([Flowers et al., 2009](https://doi.org/10.1016/j.gca.2009.01.015); [Guenthner et al., 2013](https://doi.org/10.2475/03.2013.01))
+- **ketch** for apatite fission-track (AFT) ages and track-length distributions ([Ketcham et al., 1999](https://doi.org/10.2138/am-1999-0903))
+
+T<sub>c</sub>core is the age prediction engine used by [T<sub>c</sub>1D](https://github.com/HUGG/Tc1D) and [T<sub>c</sub>plotter](https://github.com/HUGG/tcplotter), but it can also be used on its own.
 
 ## Installation
 
-In order for both T<sub>c</sub>plotter and T<sub>c</sub>1D to work, they must be able to find the executables `RDAAM_He` (`RDAAM_He.exe` in Windows) and `ketch_aft` (`ketch_aft.exe` in Windows) in the PATH for executables on your system. Setting things up to work for different operating systems thus requires specific instructions for each operating system ([Windows](#windows-window), [Linux](#linux-penguin), [macOS](#macos-apple)).
-
-Instructions for each operating system comprise two steps: (1) obtaining or building the executables and (2) installing them.
-
-### Windows :window:
-
-#### Obtaining the executables
-
-The easiest way to get up and running in Windows is to download the two executable files `RDAAM_He.exe` and `ketch_aft.exe` from the [latest code release](https://github.com/HUGG/Tc_core/releases/). If this doesn't work, you can consult the instructions below for [how to compile the executables](#compiling-the-executables).
-
-#### Installing the executables
-
-Once you have downloaded the executables, you need to put them in a suitable location for use. This could be a folder within your user space or somewhere else on your system. The important thing is that your operating system needs to be able to find the files to use Tcplotter or Tc1D. So, you can either install the files in a location where your computer already looks for executables or add the location where the files have been downloaded to the PATH where executables are found. There are many examples online that explain how to check your PATH and/or add an executable to your PATH in Windows. For example, [here](https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53), [here](https://windowsloop.com/how-to-add-to-windows-path/), or [here](https://helpdeskgeek.com/add-windows-path-environment-variable/).
-
-### Linux :penguin:
-
-#### Obtaining the executables
-
-The easiest way to get up and running in Windows is to download the two executable files `RDAAM_He` and `ketch_aft` from the [latest code release](https://github.com/HUGG/Tc_core/releases/). If this doesn't work, you can consult the instructions below for [how to compile the executables](#compiling-the-executables).
-
-#### Installing the executables
-
-Once you have downloaded the executables, you need to put them in a suitable location for use. This could be a folder within your user space or somewhere else on your system. The important thing is that your operating system needs to be able to find the files to use Tcplotter or Tc1D. So, you can either install the files in a location where your computer already looks for executables or add the location where the files have been downloaded to the PATH where executables are found.
-
-If you would prefer to install the executables in a location where they can be found in the PATH already, it is suggested to copy them to `/usr/local/bin`. Note that you may need administrator rights to do this. You can check other possible locations for installation by typing
-
 ```bash
-echo $PATH
+pip install tccore
 ```
 
-in the terminal, which will list all directories in which executables can be found.
+Pre-built wheels are available for Linux (x86-64 and ARM64), macOS (Intel and Apple silicon) and Windows (x86-64 and ARM64), so no compilers are needed.
+T<sub>c</sub>core requires Python 3.10 or newer and NumPy.
 
-If you would prefer to install them elsewhere and add them to your PATH, you can update the path in a terminal by typing
+> [!NOTE]
+> On Windows ARM64, Python 3.11 or newer is needed because NumPy does not provide Windows ARM64 packages for Python 3.10.
 
-```bash
-export PATH=$PATH:/path/to/executables
+### Older versions of T<sub>c</sub>1D and T<sub>c</sub>plotter
+
+Before version 0.3, T<sub>c</sub>core was distributed as two command-line programs (`RDAAM_He` and `ketch_aft`) rather than a Python package.
+These programs are still needed by T<sub>c</sub>1D versions older than 0.5.0 and T<sub>c</sub>plotter versions up to 0.4.0.
+They can be downloaded from the [v0.2 release](https://github.com/HUGG/tccore/releases/tag/v0.2), and installation instructions are in the [v0.2 README](https://github.com/HUGG/tccore/blob/v0.2/README.md).
+
+## Quick start
+
+```python
+import tccore
+
+# Linear cooling from 300 °C at 30 Ma to 0 °C today (10 °C/Myr)
+times = [0.0, 30.0]    # Ma, youngest (present day) first
+temps = [0.0, 300.0]   # °C
+
+he = tccore.he_ages(
+    times, temps,
+    ap_rad=60.0, ap_u=10.0, ap_th=40.0,    # apatite: radius (µm), U and Th (ppm)
+    zr_rad=60.0, zr_u=100.0, zr_th=40.0,   # zircon: radius (µm), U and Th (ppm)
+)
+aft = tccore.aft_age(times, temps)
+
+print(f"AHe: {he.ahe_corr:.2f} Ma")
+print(f"AFT: {aft.age:.2f} Ma (mean track length {aft.mean_length:.2f} µm)")
+print(f"ZHe: {he.zhe_corr:.2f} Ma")
 ```
 
-where you would replace `/path/to/executables` with the actual filepath to them. If you want this to happen automatically, you should [add that export statement to your shell resource file](https://www.geeksforgeeks.org/linux-unix/how-to-set-path-permanantly-in-linux/).
+Output:
 
-### macOS :apple:
-
-#### Obtaining the executables
-
-Unfortunately, the Tc_core executables must be compiled locally for macOS. You should consult the instructions below for [how to compile the executables](#compiling-the-executables).
-
-#### Installing the executables
-
-Once you have downloaded the executables, you need to put them in a suitable location for use. This could be a folder within your user space or somewhere else on your system. The important thing is that your operating system needs to be able to find the files to use Tcplotter or Tc1D. So, you can either install the files in a location where your computer already looks for executables or add the location where the files have been downloaded to the PATH where executables are found.
-
-If you would prefer to install the executables in a location where they can be found in the PATH already, it is suggested to copy them to `/usr/local/bin`. Note that you may need administrator rights to do this. You can check other possible locations for installation by typing
-
-```bash
-echo $PATH
+```
+AHe: 6.13 Ma
+AFT: 10.68 Ma (mean track length 13.94 µm)
+ZHe: 13.20 Ma
 ```
 
-in the terminal, which will list all directories in which executables can be found.
+## Usage
 
-If you would prefer to install them elsewhere and add them to your PATH, you can update the path in a terminal by typing
+### Time-temperature histories
 
-```bash
-export PATH=$PATH:/path/to/executables
+Both functions take a tT history as two sequences of equal length (lists or NumPy arrays):
+
+- `times`: time before present in Ma, **starting at the youngest point** (usually 0 Ma) and increasing into the past
+- `temps`: temperature in °C at each time
+
+A `ValueError` is raised if the times are not in order, the two sequences differ in length, there are fewer than two points, or any value is NaN or infinite.
+
+### `he_ages(times, temps, ap_rad, ap_u, ap_th, zr_rad, zr_u, zr_th)`
+
+Predicts apatite (RDAAM) and zircon (ZRDAAM) (U-Th)/He ages.
+Grain radii are in µm and U and Th concentrations are in ppm.
+Returns a `HeResult` with the following attributes (all in Ma):
+
+| Attribute | Description |
+|---|---|
+| `ahe` | Apatite (U-Th)/He age, uncorrected |
+| `ahe_corr` | Apatite (U-Th)/He age, alpha-ejection corrected |
+| `zhe` | Zircon (U-Th)/He age, uncorrected |
+| `zhe_corr` | Zircon (U-Th)/He age, alpha-ejection corrected |
+
+A `tccore.TccoreError` is raised if the calculation fails.
+
+### `aft_age(times, temps, alo=16.3)`
+
+Predicts an apatite fission-track age and track-length distribution.
+`alo` is the initial (unannealed) track length in µm.
+Returns an `AftResult` with the following attributes:
+
+| Attribute | Description |
+|---|---|
+| `age` | AFT age (Ma) |
+| `oldest_age` | Age of the oldest track (Ma) |
+| `mean_length` | Mean track length (µm) |
+| `lengths` | Track-length bin centres from 0.05 to 19.95 µm (NumPy array, 200 values) |
+| `pdf` | Track-length probability density for each bin (NumPy array, 200 values) |
+
+For example, to plot the predicted track-length distribution:
+
+```python
+import matplotlib.pyplot as plt
+
+plt.plot(aft.lengths, aft.pdf)
+plt.xlabel("Track length (µm)")
+plt.ylabel("Probability density")
+plt.show()
 ```
 
-where you would replace `/path/to/executables` with the actual filepath to them. If you want this to happen automatically, you can do so similarly to Linux and [add that export statement to your shell resource file](https://www.geeksforgeeks.org/linux-unix/how-to-set-path-permanantly-in-linux/). Or if you prefer macOS-specific instructions, you can [find those here](https://techpp.com/2021/09/08/set-path-variable-in-macos-guide/).
+### Model settings
 
-### Compiling the executables :desktop_computer:
+The following settings are fixed in the compiled codes:
 
-Compiling the executables for the Tc_core programs requires a few things are available on your computer. The requirements for each system vary slightly:
+- **RDAAM and ZRDAAM**: highest precision setting, no Sm, alpha stopping distances from [Ketcham et al. (2011)](https://doi.org/10.1016/j.gca.2011.10.011)
+- **ketch**: annealing model of [Ketcham et al. (1999)](https://doi.org/10.2138/am-1999-0903), Cl content of 0 wt%, no c-axis projection
 
-- Windows: [CMake](https://cmake.org/download/), [MinGW](https://sourceforge.net/projects/mingw/)
-- Linux: [CMake](https://cmake.org/) (suggested to be installed with your package manager (e.g., `apt install cmake`)), GCC/G++ compilers (most likely already installed)
-- macOS: [CMake](https://cmake.org/) (suggested to be installed using [Homebrew](https://brew.sh/)), GCC/G++ compilers (suggested to be installed using [Homebrew](https://brew.sh/) (e.g., `brew install gcc`))
+### Parallel use
 
-With the necessary software installed, you can compile the Tc_core executables by
+The compiled codes store their working state in global variables.
+Calls are made thread-safe with a lock, so running T<sub>c</sub>core in several threads works but gives no speed-up.
+For parallel calculations, use separate processes (for example `multiprocessing`, `concurrent.futures.ProcessPoolExecutor` or MPI).
 
-1. Downloading the [latest release of the Tc_core source code](https://github.com/HUGG/Tc_core/releases/) and unpacking it
-2. Opening a Windows command prompt or terminal in Linux or macOS and changing to the directory where you unpacked the source code.
-3. Create a `build` directory (e.g., `mkdir build`)
-4. Run CMake configure
-    ```bash
-    cmake -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=Release -S src
-    ```
-    - **Note**: If you have installed the GCC compilers using Homebrew on macOS, the executable names you list above should be for the corresponding verison of the installed compilers. For example, `-DCMAKE_CXX_COMPILER=g++-15` and `-DCMAKE_C_COMPILER=gcc-15`.
-5. Run CMake build
-    ```bash
-    cmake --build build --config Release
-    ```
-6. Run CMake install
-    ```bash
-    cmake --install build --prefix . --config Release
-    ```
+## Building from source
 
-The compiled executables will be installed in the `bin` directory and can be installed to the desired location using the [installation instructions above](#installation).
-
-## Testing the installation :scientist:
-
-If everything is working OK you should be able to [open a command prompt in Windows](https://www.wikihow.com/Open-the-Command-Prompt-in-Windows) or a terminal in [Linux](https://www.geeksforgeeks.org/linux-unix/how-to-open-terminal-in-linux/) or [macOS](https://support.apple.com/guide/terminal/open-or-quit-terminal-apd5265185d-f365-44cb-8b09-71a064a42125/mac) and type `RDAAM_He` or `ketch_aft` and press Enter. You should see the following:
+Building from source requires a C/C++ compiler (GCC, Clang or MSVC).
+CMake is installed automatically during the build if needed.
 
 ```bash
-> RDAAM_He
-usage: RDAAM_He tTfile [ap_rad ap_U ap_Th zr_rad zr_U zr_Th]
+git clone https://github.com/HUGG/tccore.git
+cd tccore
+pip install .
 ```
+
+To run the tests:
 
 ```bash
-> ketch_aft
-usage: ketch_aft tT_file
+pip install pytest
+pytest tests
 ```
 
-This output indicates the executables have been installed in a location where they can be found in the PATH. To test they are functioning properly, you can use an [example time-temperature history file](tt.txt) to produce the following output:
+## Citing T<sub>c</sub>core
 
-```bash
-> RDAAM_He tt.txt
-Apatite Age = 5.35, Corrected age = 7.16
-Zircon Age = 11.84, Corrected age = 14.98
-```
+If you use T<sub>c</sub>core in your work, please cite the papers describing the models it implements (see [References](#references)).
+If you use T<sub>c</sub>core through T<sub>c</sub>1D or T<sub>c</sub>plotter, please also cite those packages as described in their documentation.
 
-```bash
-> ketch_aft tt.txt
-The final age is 13.707531 Ma (Mean track length: 13.707993 um)
-```
+## References
+
+- Flowers, R. M., Ketcham, R. A., Shuster, D. L., and Farley, K. A.: Apatite (U-Th)/He thermochronometry using a radiation damage accumulation and annealing model, *Geochimica et Cosmochimica Acta*, 73, 2347–2365, <https://doi.org/10.1016/j.gca.2009.01.015>, 2009.
+- Guenthner, W. R., Reiners, P. W., Ketcham, R. A., Nasdala, L., and Giester, G.: Helium diffusion in natural zircon: Radiation damage, anisotropy, and the interpretation of zircon (U-Th)/He thermochronology, *American Journal of Science*, 313, 145–198, <https://doi.org/10.2475/03.2013.01>, 2013.
+- Ketcham, R. A., Donelick, R. A., and Carlson, W. D.: Variability of apatite fission-track annealing kinetics III: Extrapolation to geological time scales, *American Mineralogist*, 84, 1235–1255, <https://doi.org/10.2138/am-1999-0903>, 1999.
+- Ketcham, R. A., Carter, A., Donelick, R. A., Barbarand, J., and Hurford, A. J.: Improved modeling of fission-track annealing in apatite, *American Mineralogist*, 92, 799–810, <https://doi.org/10.2138/am.2007.2281>, 2007.
+- Ketcham, R. A., Gautheron, C., and Tassan-Got, L.: Accounting for long alpha-particle stopping distances in (U–Th–Sm)/He geochronology: Refinement of the baseline case, *Geochimica et Cosmochimica Acta*, 75, 7779–7791, <https://doi.org/10.1016/j.gca.2011.10.011>, 2011.
+
+## License
+
+T<sub>c</sub>core is distributed under the [GNU General Public License v3.0](LICENSE).
