@@ -85,7 +85,7 @@ ZHe: 13.20 Ma
 
 ## Citing T<sub>c</sub>ages
 
-If you use T<sub>c</sub>ages in your work, please cite the papers describing the models it implements (see [References](#references)).
+If you use T<sub>c</sub>ages in your work, please cite the software using its DOI ([10.5281/zenodo.23689444](https://doi.org/10.5281/zenodo.23689444), or use the "Cite this repository" button on GitHub) and the papers describing the models it implements (see [References](#references)).
 If you use T<sub>c</sub>ages through T<sub>c</sub>1D or T<sub>c</sub>plotter, please also cite those packages as described in their documentation.
 
 ## References
