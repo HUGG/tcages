@@ -12,6 +12,8 @@ authors:
   - family-names: Ketcham
     given-names: Richard A.
     affiliation: University of Texas at Austin, USA
+version: 0.3.1
+doi: 10.5281/zenodo.23689444
 license: GPL-3.0-or-later
 repository-code: "https://github.com/HUGG/tcages"
 keywords:
