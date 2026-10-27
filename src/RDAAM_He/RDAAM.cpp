@@ -9,7 +9,10 @@
 
 //---------------------------------------------------------------------------
 
+// Borland C++Builder directive; not recognised by other compilers
+#ifdef __BORLANDC__
 #pragma package(smart_init)
+#endif
 
 // Arrays to hold radial information for calculation
 double *aDepl238, *aDepl235, *aDepl232, *aDepl147; // Alpha depletion including zoning (% retained)
