@@ -15,21 +15,21 @@ from importlib.metadata import PackageNotFoundError, version
 from importlib.resources import files
 
 try:
-    __version__ = version("tccore")
+    __version__ = version("tcages")
 except PackageNotFoundError:
     __version__ = "dev"
 
-__all__ = ["he_ages", "aft_age", "HeResult", "AftResult", "TccoreError"]
+__all__ = ["he_ages", "aft_age", "HeResult", "AftResult", "TcagesError"]
 
 
-class TccoreError(RuntimeError):
+class TcagesError(RuntimeError):
     """Raised when an age calculation fails."""
 
 
 # Load library
 def _load(base: str) -> CDLL:
     name = f"{base}.dll" if platform.system() == "Windows" else f"lib{base}.so"
-    path = files("tccore").joinpath(name)
+    path = files("tcages").joinpath(name)
     try:
         return CDLL(os.fspath(path))
     except OSError as e:
@@ -129,7 +129,7 @@ def he_ages(times, temps, ap_rad, ap_u, ap_th, zr_rad, zr_u, zr_th) -> HeResult:
         finally:
             _rdaam.del_path(path)   # always free the C++ object
     if ap_ok.value != 1 or zr_ok.value != 1:
-        raise TccoreError(f"RDAAM failed (apatite={ap_ok.value}, zircon={zr_ok.value})")
+        raise TcagesError(f"RDAAM failed (apatite={ap_ok.value}, zircon={zr_ok.value})")
     return HeResult(*(o.value for o in out))
 
 

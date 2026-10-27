@@ -1,35 +1,35 @@
-# T<sub>c</sub>core
+# T<sub>c</sub>ages
 
-[![PyPI](https://img.shields.io/pypi/v/tccore.svg)](https://pypi.org/project/tccore/)
+[![PyPI](https://img.shields.io/pypi/v/tcages.svg)](https://pypi.org/project/tcages/)
 [![Build](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml)
 
-T<sub>c</sub>core is a Python package for predicting low-temperature thermochronometer ages from a time-temperature (tT) history.
+T<sub>c</sub>ages is a Python package for predicting low-temperature thermochronometer ages from a time-temperature (tT) history.
 It provides compiled versions of two widely used age prediction codes with a simple Python interface:
 
 - **RDAAM / ZRDAAM** for apatite and zircon (U-Th)/He ages, including the effects of radiation damage on He diffusion ([Flowers et al., 2009](https://doi.org/10.1016/j.gca.2009.01.015); [Guenthner et al., 2013](https://doi.org/10.2475/03.2013.01))
 - **ketch** for apatite fission-track (AFT) ages and track-length distributions ([Ketcham et al., 1999](https://doi.org/10.2138/am-1999-0903))
 
-T<sub>c</sub>core is the age prediction engine used by [T<sub>c</sub>1D](https://github.com/HUGG/Tc1D) and [T<sub>c</sub>plotter](https://github.com/HUGG/tcplotter), but it can also be used on its own.
+T<sub>c</sub>ages is the age prediction engine used by [T<sub>c</sub>1D](https://github.com/HUGG/Tc1D) and [T<sub>c</sub>plotter](https://github.com/HUGG/tcplotter), but it can also be used on its own.
 
 ## Installation
 
-T<sub>c</sub>core can be installed using `pip`:
+T<sub>c</sub>ages can be installed using `pip`:
 
 ```bash
-pip install tccore
+pip install tcages
 ```
 
 Pre-built wheels are available for Linux (x86-64 and ARM64), macOS (Intel and Apple silicon) and Windows (x86-64 and ARM64), so no compilers are needed.
-T<sub>c</sub>core requires Python 3.10 or newer and NumPy.
+T<sub>c</sub>ages requires Python 3.10 or newer and NumPy.
 
 > [!NOTE]
 > On Windows ARM64, Python 3.11 or newer is needed because NumPy does not provide Windows ARM64 packages for Python 3.10.
 
 ### Older versions of T<sub>c</sub>1D and T<sub>c</sub>plotter
 
-Prior to version 0.3, T<sub>c</sub>core was distributed as two command-line programs (`RDAAM_He` and `ketch_aft`) rather than a Python package.
-These programs are still needed by T<sub>c</sub>1D versions prior to 0.5.0 and T<sub>c</sub>plotter versions prior to 0.4.0.
-They can be downloaded from the [v0.2 release](https://github.com/HUGG/tccore/releases/tag/v0.2) and installation instructions are in the [v0.2 README](https://github.com/HUGG/tccore/blob/v0.2/README.md).
+Prior to version 0.3, this software was distributed as T<sub>c</sub>core, two command-line programs (`RDAAM_He` and `ketch_aft`) rather than a Python package.
+These programs are still needed by T<sub>c</sub>1D versions prior to 0.5.0 and T<sub>c</sub>plotter versions up to 0.4.0.
+They can be downloaded from the [v0.2 release](https://github.com/HUGG/tcages/releases/tag/v0.2) and installation instructions are in the [v0.2 README](https://github.com/HUGG/tcages/blob/v0.2/README.md).
 
 ### Building from source
 
@@ -37,8 +37,8 @@ Building from source requires a C/C++ compiler (GCC, Clang or MSVC).
 CMake is installed automatically during the build if needed.
 
 ```bash
-git clone https://github.com/HUGG/tccore.git
-cd tccore
+git clone https://github.com/HUGG/tcages.git
+cd tcages
 pip install .
 ```
 
@@ -52,19 +52,19 @@ pytest tests
 ## Quick start
 
 ```python
-import tccore
+import tcages
 
 # Define thermal history with cooling from 300 °C at 30 Ma to 0 °C today (rate of 10 °C/Myr)
 times = [0.0, 30.0]    # Ma, youngest (present day) first
 temps = [0.0, 300.0]   # °C
 
 # Calculate (U-Th)/He and AFT ages
-he = tccore.he_ages(
+he = tcages.he_ages(
     times, temps,
     ap_rad=60.0, ap_u=10.0, ap_th=40.0,    # apatite: radius (µm), U and Th (ppm)
     zr_rad=60.0, zr_u=100.0, zr_th=40.0,   # zircon: radius (µm), U and Th (ppm)
 )
-aft = tccore.aft_age(times, temps)
+aft = tcages.aft_age(times, temps)
 
 # Print results
 print(f"AHe: {he.ahe_corr:.2f} Ma")
@@ -80,10 +80,10 @@ AFT: 10.68 Ma (mean track length 13.94 µm)
 ZHe: 13.20 Ma
 ```
 
-## Citing T<sub>c</sub>core
+## Citing T<sub>c</sub>ages
 
-If you use T<sub>c</sub>core in your work, please cite the papers describing the models it implements (see [References](#references)).
-If you use T<sub>c</sub>core through T<sub>c</sub>1D or T<sub>c</sub>plotter, please also cite those packages as described in their documentation.
+If you use T<sub>c</sub>ages in your work, please cite the papers describing the models it implements (see [References](#references)).
+If you use T<sub>c</sub>ages through T<sub>c</sub>1D or T<sub>c</sub>plotter, please also cite those packages as described in their documentation.
 
 ## References
 
@@ -95,4 +95,4 @@ If you use T<sub>c</sub>core through T<sub>c</sub>1D or T<sub>c</sub>plotter, pl
 
 ## License
 
-T<sub>c</sub>core is distributed under the [GNU General Public License v3.0](LICENSE).
+T<sub>c</sub>ages is distributed under the [GNU General Public License v3.0](LICENSE).
