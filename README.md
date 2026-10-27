@@ -1,7 +1,9 @@
 # T<sub>c</sub>ages
 
+[![Build](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml)
+[![Python versions](https://img.shields.io/pypi/pyversions/tcages)](https://pypi.org/project/tcages/)
 [![PyPI](https://img.shields.io/pypi/v/tcages.svg)](https://pypi.org/project/tcages/)
-[![Build](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tccore/actions/workflows/publish-to-pypi.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 T<sub>c</sub>ages is a Python package for predicting low-temperature thermochronometer ages from a time-temperature (tT) history.
 It provides compiled versions of two widely used age prediction codes with a simple Python interface:
@@ -95,4 +97,4 @@ If you use T<sub>c</sub>ages through T<sub>c</sub>1D or T<sub>c</sub>plotter, pl
 
 ## License
 
-T<sub>c</sub>ages is distributed under the [GNU General Public License v3.0](LICENSE).
+T<sub>c</sub>ages is distributed under the [GNU General Public License v3.0 or later](LICENSE).

@@ -1,0 +1,106 @@
+cff-version: 1.2.0
+message: "If you use tcages in your work, please cite it as below, along with the papers describing the models it implements."
+type: software
+title: "tcages: a Python package for predicting low-temperature thermochronometer ages"
+authors:
+  - family-names: Whipp
+    given-names: David M.
+    affiliation: University of Helsinki, Finland
+  - family-names: Dönges
+    given-names: Saska
+    affiliation: University of Helsinki, Finland
+  - family-names: Ketcham
+    given-names: Richard A.
+    affiliation: University of Texas at Austin, USA
+license: GPL-3.0-or-later
+repository-code: "https://github.com/HUGG/tcages"
+keywords:
+  - thermochronology
+  - geology
+  - geophysics
+references:
+  - type: article
+    title: "Apatite (U-Th)/He thermochronometry using a radiation damage accumulation and annealing model"
+    authors:
+      - family-names: Flowers
+        given-names: Rebecca M.
+      - family-names: Ketcham
+        given-names: Richard A.
+      - family-names: Shuster
+        given-names: David L.
+      - family-names: Farley
+        given-names: Kenneth A.
+    journal: Geochimica et Cosmochimica Acta
+    volume: 73
+    start: 2347
+    end: 2365
+    year: 2009
+    doi: 10.1016/j.gca.2009.01.015
+  - type: article
+    title: "Helium diffusion in natural zircon: Radiation damage, anisotropy, and the interpretation of zircon (U-Th)/He thermochronology"
+    authors:
+      - family-names: Guenthner
+        given-names: William R.
+      - family-names: Reiners
+        given-names: Peter W.
+      - family-names: Ketcham
+        given-names: Richard A.
+      - family-names: Nasdala
+        given-names: Lutz
+      - family-names: Giester
+        given-names: Gerald
+    journal: American Journal of Science
+    volume: 313
+    start: 145
+    end: 198
+    year: 2013
+    doi: 10.2475/03.2013.01
+  - type: article
+    title: "Variability of apatite fission-track annealing kinetics III: Extrapolation to geological time scales"
+    authors:
+      - family-names: Ketcham
+        given-names: Richard A.
+      - family-names: Donelick
+        given-names: Raymond A.
+      - family-names: Carlson
+        given-names: William D.
+    journal: American Mineralogist
+    volume: 84
+    start: 1235
+    end: 1255
+    year: 1999
+    doi: 10.2138/am-1999-0903
+  - type: article
+    title: "Improved modeling of fission-track annealing in apatite"
+    authors:
+      - family-names: Ketcham
+        given-names: Richard A.
+      - family-names: Carter
+        given-names: Andrew
+      - family-names: Donelick
+        given-names: Raymond A.
+      - family-names: Barbarand
+        given-names: Jocelyn
+      - family-names: Hurford
+        given-names: Anthony J.
+    journal: American Mineralogist
+    volume: 92
+    start: 799
+    end: 810
+    year: 2007
+    doi: 10.2138/am.2007.2281
+  - type: article
+    title: "Accounting for long alpha-particle stopping distances in (U–Th–Sm)/He geochronology: Refinement of the baseline case"
+    authors:
+      - family-names: Ketcham
+        given-names: Richard A.
+      - family-names: Gautheron
+        given-names: Cécile
+      - family-names: Tassan-Got
+        given-names: Laurent
+    journal: Geochimica et Cosmochimica Acta
+    volume: 75
+    start: 7779
+    end: 7791
+    year: 2011
+    doi: 10.1016/j.gca.2011.10.011
