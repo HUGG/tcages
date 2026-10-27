@@ -1,5 +1,6 @@
 # T<sub>c</sub>ages
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23689444.svg)](https://doi.org/10.5281/zenodo.23689444)
 [![Build](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml)
 [![Python versions](https://img.shields.io/pypi/pyversions/tcages)](https://pypi.org/project/tcages/)
 [![PyPI](https://img.shields.io/pypi/v/tcages.svg)](https://pypi.org/project/tcages/)
