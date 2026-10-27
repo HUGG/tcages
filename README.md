@@ -2,6 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23689444.svg)](https://doi.org/10.5281/zenodo.23689444)
 [![Build](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/HUGG/tcages/actions/workflows/publish-to-pypi.yml)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Python versions](https://img.shields.io/pypi/pyversions/tcages)](https://pypi.org/project/tcages/)
 [![PyPI](https://img.shields.io/pypi/v/tcages.svg)](https://pypi.org/project/tcages/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -58,14 +59,21 @@ pytest tests
 import tcages
 
 # Define thermal history with cooling from 300 °C at 30 Ma to 0 °C today (rate of 10 °C/Myr)
-times = [0.0, 30.0]    # Ma, youngest (present day) first
-temps = [0.0, 300.0]   # °C
+times = [0.0, 30.0]  # Ma, youngest (present day) first
+temps = [0.0, 300.0]  # °C
 
 # Calculate (U-Th)/He and AFT ages
 he = tcages.he_ages(
-    times, temps,
-    ap_rad=60.0, ap_u=10.0, ap_th=40.0,    # apatite: radius (µm), U and Th (ppm)
-    zr_rad=60.0, zr_u=100.0, zr_th=40.0,   # zircon: radius (µm), U and Th (ppm)
+    times,
+    temps,
+    # Apatite: radius (µm), U and Th (ppm)
+    ap_rad=60.0,
+    ap_u=10.0,
+    ap_th=40.0,
+    # Zircon: radius (µm), U and Th (ppm)
+    zr_rad=60.0,
+    zr_u=100.0,
+    zr_th=40.0,
 )
 aft = tcages.aft_age(times, temps)
 
