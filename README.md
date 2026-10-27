@@ -13,6 +13,8 @@ T<sub>c</sub>core is the age prediction engine used by [T<sub>c</sub>1D](https:/
 
 ## Installation
 
+T<sub>c</sub>core can be installed using `pip`:
+
 ```bash
 pip install tccore
 ```
@@ -25,104 +27,11 @@ T<sub>c</sub>core requires Python 3.10 or newer and NumPy.
 
 ### Older versions of T<sub>c</sub>1D and T<sub>c</sub>plotter
 
-Before version 0.3, T<sub>c</sub>core was distributed as two command-line programs (`RDAAM_He` and `ketch_aft`) rather than a Python package.
-These programs are still needed by T<sub>c</sub>1D versions older than 0.5.0 and T<sub>c</sub>plotter versions up to 0.4.0.
-They can be downloaded from the [v0.2 release](https://github.com/HUGG/tccore/releases/tag/v0.2), and installation instructions are in the [v0.2 README](https://github.com/HUGG/tccore/blob/v0.2/README.md).
+Prior to version 0.3, T<sub>c</sub>core was distributed as two command-line programs (`RDAAM_He` and `ketch_aft`) rather than a Python package.
+These programs are still needed by T<sub>c</sub>1D versions prior to 0.5.0 and T<sub>c</sub>plotter versions prior to 0.4.0.
+They can be downloaded from the [v0.2 release](https://github.com/HUGG/tccore/releases/tag/v0.2) and installation instructions are in the [v0.2 README](https://github.com/HUGG/tccore/blob/v0.2/README.md).
 
-## Quick start
-
-```python
-import tccore
-
-# Linear cooling from 300 °C at 30 Ma to 0 °C today (10 °C/Myr)
-times = [0.0, 30.0]    # Ma, youngest (present day) first
-temps = [0.0, 300.0]   # °C
-
-he = tccore.he_ages(
-    times, temps,
-    ap_rad=60.0, ap_u=10.0, ap_th=40.0,    # apatite: radius (µm), U and Th (ppm)
-    zr_rad=60.0, zr_u=100.0, zr_th=40.0,   # zircon: radius (µm), U and Th (ppm)
-)
-aft = tccore.aft_age(times, temps)
-
-print(f"AHe: {he.ahe_corr:.2f} Ma")
-print(f"AFT: {aft.age:.2f} Ma (mean track length {aft.mean_length:.2f} µm)")
-print(f"ZHe: {he.zhe_corr:.2f} Ma")
-```
-
-Output:
-
-```
-AHe: 6.13 Ma
-AFT: 10.68 Ma (mean track length 13.94 µm)
-ZHe: 13.20 Ma
-```
-
-## Usage
-
-### Time-temperature histories
-
-Both functions take a tT history as two sequences of equal length (lists or NumPy arrays):
-
-- `times`: time before present in Ma, **starting at the youngest point** (usually 0 Ma) and increasing into the past
-- `temps`: temperature in °C at each time
-
-A `ValueError` is raised if the times are not in order, the two sequences differ in length, there are fewer than two points, or any value is NaN or infinite.
-
-### `he_ages(times, temps, ap_rad, ap_u, ap_th, zr_rad, zr_u, zr_th)`
-
-Predicts apatite (RDAAM) and zircon (ZRDAAM) (U-Th)/He ages.
-Grain radii are in µm and U and Th concentrations are in ppm.
-Returns a `HeResult` with the following attributes (all in Ma):
-
-| Attribute | Description |
-|---|---|
-| `ahe` | Apatite (U-Th)/He age, uncorrected |
-| `ahe_corr` | Apatite (U-Th)/He age, alpha-ejection corrected |
-| `zhe` | Zircon (U-Th)/He age, uncorrected |
-| `zhe_corr` | Zircon (U-Th)/He age, alpha-ejection corrected |
-
-A `tccore.TccoreError` is raised if the calculation fails.
-
-### `aft_age(times, temps, alo=16.3)`
-
-Predicts an apatite fission-track age and track-length distribution.
-`alo` is the initial (unannealed) track length in µm.
-Returns an `AftResult` with the following attributes:
-
-| Attribute | Description |
-|---|---|
-| `age` | AFT age (Ma) |
-| `oldest_age` | Age of the oldest track (Ma) |
-| `mean_length` | Mean track length (µm) |
-| `lengths` | Track-length bin centres from 0.05 to 19.95 µm (NumPy array, 200 values) |
-| `pdf` | Track-length probability density for each bin (NumPy array, 200 values) |
-
-For example, to plot the predicted track-length distribution:
-
-```python
-import matplotlib.pyplot as plt
-
-plt.plot(aft.lengths, aft.pdf)
-plt.xlabel("Track length (µm)")
-plt.ylabel("Probability density")
-plt.show()
-```
-
-### Model settings
-
-The following settings are fixed in the compiled codes:
-
-- **RDAAM and ZRDAAM**: highest precision setting, no Sm, alpha stopping distances from [Ketcham et al. (2011)](https://doi.org/10.1016/j.gca.2011.10.011)
-- **ketch**: annealing model of [Ketcham et al. (1999)](https://doi.org/10.2138/am-1999-0903), Cl content of 0 wt%, no c-axis projection
-
-### Parallel use
-
-The compiled codes store their working state in global variables.
-Calls are made thread-safe with a lock, so running T<sub>c</sub>core in several threads works but gives no speed-up.
-For parallel calculations, use separate processes (for example `multiprocessing`, `concurrent.futures.ProcessPoolExecutor` or MPI).
-
-## Building from source
+### Building from source
 
 Building from source requires a C/C++ compiler (GCC, Clang or MSVC).
 CMake is installed automatically during the build if needed.
@@ -138,6 +47,37 @@ To run the tests:
 ```bash
 pip install pytest
 pytest tests
+```
+
+## Quick start
+
+```python
+import tccore
+
+# Define thermal history with cooling from 300 °C at 30 Ma to 0 °C today (rate of 10 °C/Myr)
+times = [0.0, 30.0]    # Ma, youngest (present day) first
+temps = [0.0, 300.0]   # °C
+
+# Calculate (U-Th)/He and AFT ages
+he = tccore.he_ages(
+    times, temps,
+    ap_rad=60.0, ap_u=10.0, ap_th=40.0,    # apatite: radius (µm), U and Th (ppm)
+    zr_rad=60.0, zr_u=100.0, zr_th=40.0,   # zircon: radius (µm), U and Th (ppm)
+)
+aft = tccore.aft_age(times, temps)
+
+# Print results
+print(f"AHe: {he.ahe_corr:.2f} Ma")
+print(f"AFT: {aft.age:.2f} Ma (mean track length {aft.mean_length:.2f} µm)")
+print(f"ZHe: {he.zhe_corr:.2f} Ma")
+```
+
+Output:
+
+```
+AHe: 6.13 Ma
+AFT: 10.68 Ma (mean track length 13.94 µm)
+ZHe: 13.20 Ma
 ```
 
 ## Citing T<sub>c</sub>core
