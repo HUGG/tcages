@@ -44,6 +44,8 @@ _rdaam.path_push.argtypes = [c_void_p, c_double, c_double]
 _rdaam.path_push.restype = None
 _rdaam.del_path.argtypes = [c_void_p]
 _rdaam.del_path.restype = None
+# Keep one line per group of C arguments so the comments match the signature
+# fmt: off
 _rdaam.run_RDAAM_He.argtypes = [
     c_void_p,                                   # TTPath*
     c_double, c_double, c_double,               # ap_rad, ap_U, ap_Th
@@ -53,16 +55,19 @@ _rdaam.run_RDAAM_He.argtypes = [
     POINTER(c_double), POINTER(c_double),       # zr_age*, zr_corrAge*
     POINTER(c_int), POINTER(c_int),             # ap_success*, zr_success*
 ]
+# fmt: on
 _rdaam.run_RDAAM_He.restype = None
 
 # Ketcham AFT configuration
 _ketch = _load("ketch")
+# fmt: off
 _ketch.ketch_main.argtypes = [
     POINTER(c_int), POINTER(c_float), POINTER(c_float),  # ntime*, time[], temp[]
     POINTER(c_double), POINTER(c_double),                # alo*, final_age*
     POINTER(c_double), POINTER(c_double),                # oldest_age*, fmean*
     POINTER(c_double),                                   # fdist[201]
 ]
+# fmt: on
 _ketch.ketch_main.restype = None
 
 # Both C codes use global state: serialize calls within a process
@@ -70,25 +75,25 @@ _rdaam_lock = threading.Lock()
 _ketch_lock = threading.Lock()
 
 _NBINS = 200
-_LENGTHS = (np.arange(_NBINS) + 0.5) * 20.0 / _NBINS   # bin centers, um
+_LENGTHS = (np.arange(_NBINS) + 0.5) * 20.0 / _NBINS  # bin centers, um
 
 
 # Create structures to store results
 @dataclass(frozen=True)
 class HeResult:
-    ahe: float        # uncorrected apatite (U-Th)/He age, Ma
-    ahe_corr: float   # alpha-ejection-corrected AHe age, Ma
+    ahe: float  # uncorrected apatite (U-Th)/He age, Ma
+    ahe_corr: float  # alpha-ejection-corrected AHe age, Ma
     zhe: float
     zhe_corr: float
 
 
 @dataclass(frozen=True)
 class AftResult:
-    age: float            # Ma
-    oldest_age: float     # age of oldest track, Ma
-    mean_length: float    # um
-    lengths: np.ndarray   # bin centres, um (200)
-    pdf: np.ndarray       # track-length probability density (200)
+    age: float  # Ma
+    oldest_age: float  # age of oldest track, Ma
+    mean_length: float  # um
+    lengths: np.ndarray  # bin centres, um (200)
+    pdf: np.ndarray  # track-length probability density (200)
 
 
 # Check input arrays are safe to proceed
@@ -122,12 +127,23 @@ def he_ages(times, temps, ap_rad, ap_u, ap_th, zr_rad, zr_u, zr_th) -> HeResult:
             for ti, Ti in zip(t, T):
                 _rdaam.path_push(path, ti, Ti)
             _rdaam.run_RDAAM_He(
-                path, ap_rad, ap_u, ap_th, byref(out[0]), byref(out[1]), 0.0,
-                zr_rad, zr_u, zr_th, byref(out[2]), byref(out[3]),
-                byref(ap_ok), byref(zr_ok),
+                path,
+                ap_rad,
+                ap_u,
+                ap_th,
+                byref(out[0]),
+                byref(out[1]),
+                0.0,
+                zr_rad,
+                zr_u,
+                zr_th,
+                byref(out[2]),
+                byref(out[3]),
+                byref(ap_ok),
+                byref(zr_ok),
             )
         finally:
-            _rdaam.del_path(path)   # always free the C++ object
+            _rdaam.del_path(path)  # always free the C++ object
     if ap_ok.value != 1 or zr_ok.value != 1:
         raise TcagesError(f"RDAAM failed (apatite={ap_ok.value}, zircon={zr_ok.value})")
     return HeResult(*(o.value for o in out))
@@ -141,7 +157,7 @@ def aft_age(times, temps, alo: float = 16.3) -> AftResult:
     """
     t, T = _check_path(times, temps)
     # Convert arrays to 32-bit versions
-    t32 = np.ascontiguousarray(t, dtype=np.float32)   # ketch takes float[]
+    t32 = np.ascontiguousarray(t, dtype=np.float32)  # ketch takes float[]
     T32 = np.ascontiguousarray(T, dtype=np.float32)
     age, oldest, fmean = c_double(), c_double(), c_double()
     fdist = (c_double * (_NBINS + 1))()
@@ -150,7 +166,11 @@ def aft_age(times, temps, alo: float = 16.3) -> AftResult:
             byref(c_int(t32.size)),
             t32.ctypes.data_as(POINTER(c_float)),
             T32.ctypes.data_as(POINTER(c_float)),
-            byref(c_double(alo)), byref(age), byref(oldest), byref(fmean), fdist,
+            byref(c_double(alo)),
+            byref(age),
+            byref(oldest),
+            byref(fmean),
+            fdist,
         )
     pdf = np.frombuffer(fdist, dtype=np.float64)[1:].copy()  # drop fdist[0] padding
     return AftResult(age.value, oldest.value, fmean.value, _LENGTHS.copy(), pdf)
