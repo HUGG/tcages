@@ -3,7 +3,7 @@ requires = ["scikit-build-core>=0.10"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "tccore"
+name = "tcages"
 version = "0.3.0.dev1"
 authors = [
     {name = "Dave Whipp", email = "david.whipp@helsinki.fi"},
@@ -12,7 +12,7 @@ authors = [
 maintainers = [
     {name = "Dave Whipp", email = "david.whipp@helsinki.fi"},
 ]
-description = "Thermochronometer age prediction libraries (RDAAM, ketch) for Tc1D and tcplotter"
+description = "Thermochronometer age prediction libraries used in Tc1D and Tcplotter"
 keywords = ["thermochronology", "geology", "geophysics"]
 readme = "README.md"
 requires-python = ">=3.10.0"
@@ -40,7 +40,7 @@ classifiers = [
 dependencies = ["numpy"]
 
 [tool.scikit-build]
-wheel.packages = ["src/tccore"]
+wheel.packages = ["src/tcages"]
 wheel.py-api = "py3"
 wheel.expand-macos-universal-tags = true
 cmake.version = ">=3.18"
