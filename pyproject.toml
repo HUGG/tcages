@@ -47,7 +47,7 @@ cmake.version = ">=3.18"
 cmake.build-type = "Release"
 
 [project.urls]
-repository = "https://github.com/HUGG/tccore"
+repository = "https://github.com/HUGG/tcages"
 
 [tool.cibuildwheel]
 test-requires = ["pytest"]
