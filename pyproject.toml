@@ -40,6 +40,10 @@ classifiers = [
 ]
 dependencies = ["numpy"]
 
+[project.optional-dependencies]
+lint = ["ruff"]
+tests = ["pytest"]
+
 [tool.scikit-build]
 wheel.packages = ["src/tcages"]
 wheel.py-api = "py3"
@@ -54,3 +58,16 @@ repository = "https://github.com/HUGG/tcages"
 test-requires = ["pytest"]
 test-command = "pytest {project}/tests -v"
 test-skip = "cp310-win_arm64"
+# 32-bit Windows is not supported by scipy and matplotlib, which Tc1D and tcplotter need
+skip = "*-win32"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+# Pyflakes (F) and a subset of pycodestyle (E) errors, as used for Tc1D and tcplotter
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.format]
+quote-style = "double"

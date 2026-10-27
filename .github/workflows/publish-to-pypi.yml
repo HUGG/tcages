@@ -14,6 +14,26 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Lint and check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check code with ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          version: "0.16.9"
+          args: check
+
+      - name: Check formatting with ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          version: "0.16.9"
+          args: format --check
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -67,7 +87,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_testpypi:
-    needs: [build_wheels, build_sdist]
+    needs: [lint, build_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: testpypi
     permissions:
@@ -84,7 +104,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
 
   upload_pypi:
-    needs: [build_wheels, build_sdist]
+    needs: [lint, build_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
